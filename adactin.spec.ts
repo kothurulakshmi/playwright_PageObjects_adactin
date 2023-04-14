@@ -1,14 +1,18 @@
 import { expect, test } from '@playwright/test'
-import AdactinHome from '../pages/adactin.page'
+import AdactinHome from './adactin.page'
+import { jiraupdate } from '../Adactin/jira.spec'
+
 test.describe('Adactin', () => {
     let adactin
+    let jupdate
+    var location = 'Sydney';
+
     test('login-101', async ({ page }) => {
         adactin = new AdactinHome(page)
 
         await adactin.navigate()
         await adactin.loginWithCredentials('testuser23', 'testpassword')
         await expect(page).toHaveTitle('Adactin.com - Search Hotel');
-
     })
     test('102-To verify whether the check-out date field accepts a later date than check i date', async ({ page }) => {
         adactin = new AdactinHome(page)
@@ -42,8 +46,10 @@ test.describe('Adactin', () => {
         // await expect(page).toMatch()
         // await expect(page).toContain('Check-In Date shall be before than Check-Out Date')
 
+
     })
     test('103-To check if error is reported if check-out date field is in the past', async ({ page }) => {
+
         adactin = new AdactinHome(page)
 
         await adactin.navigate()
@@ -72,14 +78,12 @@ test.describe('Adactin', () => {
 
         const ee = await page.locator("span[id='checkin_span']").textContent();
         await expect(ee).toContain('Check-In Date shall be before than Check-Out Date')
-        //span[id='checkin_span']
 
-    })//Check-In Date shall be before than Check-Out Date
+    })
 
     test('104 -location verification', async ({ page }) => {
         adactin = new AdactinHome(page)
 
-        var location = 'Sydney';
         await adactin.navigate()
         await adactin.loginWithCredentials('testuser23', 'testpassword')
         await expect(page).toHaveTitle('Adactin.com - Search Hotel');
@@ -114,22 +118,21 @@ test.describe('Adactin', () => {
             console.log('fail')
             test.fail
         }
+
     })
 
     test('105-To verify whether Check-in date and Check-out date are being displayed in Select Hotel page', async ({ page }) => {
         adactin = new AdactinHome(page)
-        var location = 'Sydney';
 
         await adactin.navigate()
         await adactin.loginWithCredentials('testuser23', 'testpassword')
         await expect(page).toHaveTitle('Adactin.com - Search Hotel');
-        page.pause()
         const now = new Date()
         const date = now.getDate()
-        const dat1=date+1
+        const dat1 = date + 1
         console.log(dat1)
-        const month=now.getMonth()
-        const month1=month+1
+        const month = now.getMonth()
+        const month1 = month + 1
 
         let checkOut = + '/' + date + '/' + now.getFullYear()
         console.log(checkOut)
@@ -141,17 +144,15 @@ test.describe('Adactin', () => {
         await adactin.dateOut.fill(checkOut)
         await adactin.search.click();
 
+        var dat2=date.toString()
+
         //get the date from the page and compare
         const ee = await page.locator("//input[contains(@name,'arr_date') and @type='text']").getAttribute('value')
-        await expect(ee).toContain(date)
-
-        page.waitForTimeout(50000)
-
+        await expect(ee).toContain(dat2)
     })
 
     test('106-Verify the no.of rooms', async ({ page }) => {
         adactin = new AdactinHome(page)
-        var location = 'Sydney';
         const room = "1";
         await adactin.navigate()
         await adactin.loginWithCredentials('testuser23', 'testpassword')
@@ -176,6 +177,18 @@ test.describe('Adactin', () => {
         //Rooms
         const rooms = await page.locator("//input[contains(@name,'rooms') and @type='text']").getAttribute('value')
         await expect(rooms).toContain(room)
-
     })
+
+    test.afterEach(async ({ }, testInfo) => {
+        console.log('status=' + testInfo.status)
+        console.log('Expected=' + testInfo.expectedStatus)
+        console.log('Title=' + testInfo.title)
+
+        if (testInfo.status !== testInfo.expectedStatus)
+            console.log(`${testInfo.title} did not run as expected!`);
+        jupdate = new jiraupdate()
+        jupdate.logDefect(testInfo.title)
+
+    });
+
 })
