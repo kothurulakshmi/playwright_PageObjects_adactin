@@ -30,6 +30,7 @@ class AdactinHome {
         }
         async loginWithCredentials(username:any , password:any)
         {
+            //login credentials
             await this.username.fill(username);
             await  this.password.fill(password);
              await this.login.click();
