@@ -24,7 +24,7 @@ class AdactinHome {
         this.search=page.locator("input[name='Submit']")
     }
     async navigate() {
-
+ //help to go the website
         await this.page.goto('http://adactinhotelapp.com/')
         
         }
